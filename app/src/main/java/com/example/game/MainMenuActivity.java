@@ -9,7 +9,7 @@ public class MainMenuActivity extends SingleFragmentActivity {
 
     @Override
     protected Fragment createFragment() {
-        return null;
+        return new MainMenuFragment();
     }
 
 }
