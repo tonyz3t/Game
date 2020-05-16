@@ -1,9 +1,5 @@
 package com.example.game;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -14,30 +10,28 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AnimationSet;
 import android.view.animation.LinearInterpolator;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import java.util.Calendar;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 
-class GameLevelFragment extends Fragment {
+import com.example.game.R;
+
+public class MainActivity extends AppCompatActivity {
     boolean animationOver = true;
+    private Button mPauseButton;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
+        setContentView(R.layout.activity_main);
+        final ImageView image = findViewById(R.id.imageImageView);
+        FrameLayout screenCoverLayout = (FrameLayout) findViewById(R.id.screenFrameLayout);
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.game_level_fragment, container, false);
-
-        final ImageView image = v.findViewById(R.id.imageImageView);
-        FrameLayout screenCoverLayout = (FrameLayout) v.findViewById(R.id.screenFrameLayout);
 
         screenCoverLayout.setOnTouchListener(new View.OnTouchListener() {
             private static final int MAX_CLICK_DURATION = 200;
@@ -84,8 +78,5 @@ class GameLevelFragment extends Fragment {
                 return true;
             }
         });
-
-
-        return v;
     }
 }

@@ -9,6 +9,15 @@
     android:focusable="true"
     android:focusableInTouchMode="true">
 
+    <Button
+        android:id="@+id/pause_button"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/imageImageView"
         android:layout_width="wrap_content"
