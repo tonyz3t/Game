@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Game</string>
     <string name="play">Play</string>
+    <string name="quit_game">Quit Game?</string>
+    <string name="quit">Quit</string>
+    <string name="cancel">Cancel</string>
 </resources>

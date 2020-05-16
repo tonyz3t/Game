@@ -5,6 +5,9 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,13 +19,18 @@ import android.widget.ImageView;
 
 import java.util.Calendar;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.game.R;
 
 public class MainActivity extends AppCompatActivity {
     boolean animationOver = true;
     private Button mPauseButton;
+    private PauseDialogFragment mPauseDialog;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -31,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         final ImageView image = findViewById(R.id.imageImageView);
         FrameLayout screenCoverLayout = (FrameLayout) findViewById(R.id.screenFrameLayout);
+        mPauseButton = (Button) findViewById(R.id.pause_button);
 
 
         screenCoverLayout.setOnTouchListener(new View.OnTouchListener() {
@@ -78,5 +87,59 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        // Pause button
+        mPauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // When this button is pressed. Create an alert dialog and pause what is below
+                AlertDialog.Builder pauseDialog = new AlertDialog.Builder(v.getContext());
+                pauseDialog.setMessage(R.string.quit_game)
+                        // The positive button destroys current activity and sends the user back to the main menu
+                        .setPositiveButton(R.string.quit, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                            }
+                        })
+                        // Negative button just closes the dialog and returns to the game
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        })
+                        .create();
+
+                // Make the alert dialog visible
+                pauseDialog.show();
+            }
+        });
+    }
+
+    // a class to represent our pause dialog
+    // Im not sure if this is necessary. It has not been called anywhere in this project yet
+    public class PauseDialogFragment extends DialogFragment {
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(R.string.quit_game)
+                    .setPositiveButton(R.string.quit, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    })
+                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // close dialog
+                            dialog.cancel();
+                        }
+                    });
+
+            return builder.create();
+        }
     }
 }
