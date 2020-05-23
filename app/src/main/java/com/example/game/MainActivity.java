@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -49,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
     //private Display mDisplay = getWindowManager().getDefaultDisplay();
     private static Point mDisplaySize = new Point();
 
+    // Reference to our background thread
+    AsyncTask mBackgroundThread;
+
     // List of our updatable objects
     private ArrayList<Updatable> updatables = new ArrayList<>();
 
@@ -71,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         addUpdatable(mBox);
 
         // Start our background task
-        new BackGroundTask().execute();
+        mBackgroundThread = new BackGroundTask().execute();
 
 
         //Detect Screen touch
@@ -161,6 +165,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // end the background thread
+        mBackgroundThread.cancel(true);
+    }
+
     //Simple up down animation method for double jump
     private void doubleJump(ImageView image) {
         hasDoubleJumpHappened = true;
@@ -184,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Async task class to do our background tasks
+    // We will destroy the background thread once the activity is destroyed. Should prevent memory leaks.
     private class BackGroundTask extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -209,13 +221,11 @@ public class MainActivity extends AppCompatActivity {
 
     // Getter for our screen width
     public static int getWidth(){
-        int maxWidth = mDisplaySize.x;
-        return maxWidth;
+        return mDisplaySize.x;
     }
 
     // Getter for our screen height
     public static int getHeight(){
-        int maxHeight = mDisplaySize.y;
-        return maxHeight;
+        return mDisplaySize.y;
     }
 }
