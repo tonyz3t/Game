@@ -188,6 +188,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
+            // have the thread always running in the back and update every tick
+            // causes leaks???
             boolean running = true;
             while(running) {
                 update();
