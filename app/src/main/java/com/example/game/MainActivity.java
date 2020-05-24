@@ -8,11 +8,15 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.Canvas;
+import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.AnimationSet;
@@ -40,9 +44,11 @@ public class MainActivity extends AppCompatActivity {
     //private PauseDialogFragment mPauseDialog;
     private ImageView image;
     private FrameLayout screenCoverLayout;
+    //private SurfaceHolder holder;
     //Has double jump happened yet? Set to false by default
     boolean hasDoubleJumpHappened = false;
-
+    //boolean to track if our surface has been created
+    //boolean mSurfaceCreated = false;
     // Our boxes object
     Boxes mBox = new Boxes();
 
@@ -51,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private static Point mDisplaySize = new Point();
 
     // Reference to our background thread
-    AsyncTask mBackgroundThread;
+    Thread mBackgroundThread;
 
     // List of our updatable objects
     private ArrayList<Updatable> updatables = new ArrayList<>();
@@ -59,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
     private void addUpdatable(Updatable u){
         updatables.add(u);
     }
-
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -70,13 +75,20 @@ public class MainActivity extends AppCompatActivity {
         image = findViewById(R.id.imageImageView);
         // Layout to detect screen touch
         screenCoverLayout = (FrameLayout) findViewById(R.id.screenFrameLayout);
+        // Pause Button
         mPauseButton = (Button) findViewById(R.id.pause_button);
+
+        //keep our screen on while user plays the game
+        screenCoverLayout.setKeepScreenOn(true);
+        //get our screen holder
+        //holder = screenCoverLayout.getHolder();
 
         addUpdatable(mBox);
 
         // Start our background task
-        mBackgroundThread = new BackGroundTask().execute();
+        startThread();
 
+        //screenCoverLayout.setZOrderOnTop(true);
 
         //Detect Screen touch
         screenCoverLayout.setOnTouchListener(new View.OnTouchListener() {
@@ -136,6 +148,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /*// handle holders callbacks
+        holder.addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+                //set our surface created boolean to true and start our background thread
+                mSurfaceCreated = true;
+                startThread();
+            }
+
+            //this method can be ignored
+            @Override
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+                //set surface boolean to false and stop our background thread
+                mSurfaceCreated = false;
+                stopThread();
+            }
+        });
+
+        holder.setFormat(PixelFormat.TRANSLUCENT);*/
+
+
         // Pause button
         mPauseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,11 +203,38 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // Stop thread once the activity is destroyed
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // end the background thread
-        mBackgroundThread.cancel(true);
+        stopThread();
+    }
+
+    // Helper method to start our backgroundThread
+    private void startThread() {
+        //First clear out existing thread
+        stopThread();
+        // Create new thread and start
+        mBackgroundThread = new BackgroundThread();
+        mBackgroundThread.start();
+    }
+
+    // Helper method to stop our background thread
+    private void stopThread() {
+        if(mBackgroundThread != null){
+            //stop our thread
+            mBackgroundThread.interrupt();
+
+            // join it back to the main thread
+            try {
+                mBackgroundThread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            //destroy background thread
+            mBackgroundThread = null;
+        }
     }
 
     //Simple up down animation method for double jump
@@ -194,24 +259,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    // Async task class to do our background tasks
-    // We will destroy the background thread once the activity is destroyed. Should prevent memory leaks.
-    private class BackGroundTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            // have the thread always running in the back and update every tick
-            // causes leaks???
-            boolean running = true;
-            while(running) {
-                update();
-            }
-
-            // always returns null
-            return null;
-        }
-    }
-
     // method to update our updatable objects
     private void update(){
         for(Updatable u: updatables){
@@ -227,5 +274,21 @@ public class MainActivity extends AppCompatActivity {
     // Getter for our screen height
     public static int getHeight(){
         return mDisplaySize.y;
+    }
+
+    // Custom background thread
+    // We will handle our game loop within this class
+    private class BackgroundThread extends Thread{
+        @Override
+        public void run() {
+            super.run();
+
+            // keep updating our objects while the thread is running
+            while(!Thread.interrupted()){
+                update();
+                // Handle game loop
+            }
+
+        }
     }
 }
