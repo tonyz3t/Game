@@ -87,9 +87,9 @@ public class MainActivity extends AppCompatActivity {
         //Box init and image
         mBoxes = new Boxes(this);
         String imageUri = "drawable://" + R.drawable.simplecrate;
-        mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.simplecrate);
+        Bitmap boxBitmap = PictureUtils.getScaledBitmap(imageUri, this);
         mBoxImage = (ImageView) findViewById(R.id.sprite_crate);
-        mBoxImage.setImageBitmap(mBitmap);
+        mBoxImage.setImageBitmap(boxBitmap);
 
         // Pause Button
         mPauseButton = (Button) findViewById(R.id.pause_button);
