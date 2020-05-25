@@ -86,8 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Box init and image
         mBoxes = new Boxes(this);
-        String imageUri = "drawable://" + R.drawable.simplecrate;
-        Bitmap boxBitmap = PictureUtils.getScaledBitmap(imageUri, this);
+        Bitmap boxBitmap = PictureUtils.getScaledBitmap(getResources(), R.drawable.simplecrate, this);
         mBoxImage = (ImageView) findViewById(R.id.sprite_crate);
         mBoxImage.setImageBitmap(boxBitmap);
 

@@ -1,6 +1,7 @@
 package com.example.game;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -14,11 +15,11 @@ public class PictureUtils {
     *   -   destWidth: the specified width to be returned
     *   -   destHeight: the specified height to be returned
      */
-    public static Bitmap getScaledBitmap(String path, int destWidth, int destHeight){
+    public static Bitmap getScaledBitmap(Resources resources,int id, int destWidth, int destHeight){
         // Get our image dimensions
         BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;  // allows the caller to query the bitmap without having to allocated memory for its pixels
-        BitmapFactory.decodeFile(path, options);    // decodes the image into a bitmap
+        BitmapFactory.decodeResource(resources, id);    // decodes the image into a bitmap
 
         float srcWidth = options.outWidth;
         float srcHeight = options.outHeight;
@@ -41,14 +42,14 @@ public class PictureUtils {
         options.inSampleSize = inSampleSize;
 
         //create final bitmap
-        return BitmapFactory.decodeFile(path, options);
+        return BitmapFactory.decodeResource(resources, id, options);
     }
 
     // Conservative scaling method to scale our bitmap
-    public static Bitmap getScaledBitmap(String path, Activity activity){
+    public static Bitmap getScaledBitmap(Resources resources, int id, Activity activity){
         // get the size of our screen
         Point size = new Point();
         activity.getWindowManager().getDefaultDisplay().getSize(size);
-        return getScaledBitmap(path, size.x, size.y);
+        return getScaledBitmap(resources, id, size.x, size.y);
     }
 }
