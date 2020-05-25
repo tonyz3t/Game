@@ -8,6 +8,8 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
@@ -43,18 +45,21 @@ public class MainActivity extends AppCompatActivity {
     private Button mPauseButton;
     //private PauseDialogFragment mPauseDialog;
     private ImageView image;
-    private FrameLayout screenCoverLayout;
-    //private SurfaceHolder holder;
+    private SurfaceView screenCoverLayout;
+    private SurfaceHolder holder;
+    //box
+    private ImageView mBoxImage;
+    private Bitmap mBitmap;
+
     //Has double jump happened yet? Set to false by default
     boolean hasDoubleJumpHappened = false;
     //boolean to track if our surface has been created
-    //boolean mSurfaceCreated = false;
+    boolean mSurfaceCreated = false;
     // Our boxes object
-    Boxes mBox = new Boxes();
+    private Boxes mBoxes;
+    // Window dimensions
+    private Point mSize;
 
-    //Our Display size
-    //private Display mDisplay = getWindowManager().getDefaultDisplay();
-    private static Point mDisplaySize = new Point();
 
     // Reference to our background thread
     Thread mBackgroundThread;
@@ -71,24 +76,35 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // Get Window Dimensions
+        mSize = new Point();
+        getWindowManager().getDefaultDisplay().getSize(mSize);
         // Character Image
         image = findViewById(R.id.imageImageView);
         // Layout to detect screen touch
-        screenCoverLayout = (FrameLayout) findViewById(R.id.screenFrameLayout);
+        screenCoverLayout = (SurfaceView) findViewById(R.id.screenFrameLayout);
+
+        //Box init and image
+        mBoxes = new Boxes(this);
+        String imageUri = "drawable://" + R.drawable.simplecrate;
+        mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.simplecrate);
+        mBoxImage = (ImageView) findViewById(R.id.sprite_crate);
+        mBoxImage.setImageBitmap(mBitmap);
+
         // Pause Button
         mPauseButton = (Button) findViewById(R.id.pause_button);
 
         //keep our screen on while user plays the game
         screenCoverLayout.setKeepScreenOn(true);
         //get our screen holder
-        //holder = screenCoverLayout.getHolder();
+        holder = screenCoverLayout.getHolder();
 
-        addUpdatable(mBox);
+        addUpdatable(mBoxes);
 
         // Start our background task
-        startThread();
+        //startThread();
 
-        //screenCoverLayout.setZOrderOnTop(true);
+        screenCoverLayout.setZOrderOnTop(true);
 
         //Detect Screen touch
         screenCoverLayout.setOnTouchListener(new View.OnTouchListener() {
@@ -148,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /*// handle holders callbacks
+        // handle holders callbacks
         holder.addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
@@ -171,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        holder.setFormat(PixelFormat.TRANSLUCENT);*/
+        holder.setFormat(PixelFormat.TRANSLUCENT);
 
 
         // Pause button
@@ -207,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        stopThread();
+        //stopThread();
     }
 
     // Helper method to start our backgroundThread
@@ -266,16 +282,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Getter for our screen width
-    public static int getWidth(){
-        return mDisplaySize.x;
-    }
-
-    // Getter for our screen height
-    public static int getHeight(){
-        return mDisplaySize.y;
-    }
-
     // Custom background thread
     // We will handle our game loop within this class
     private class BackgroundThread extends Thread{
@@ -285,9 +291,20 @@ public class MainActivity extends AppCompatActivity {
 
             // keep updating our objects while the thread is running
             while(!Thread.interrupted()){
-                update();
+                //handle game loop
+                //get our canvas we will be drawing to
+                Canvas canvas = null;
+
+                try {
+                    canvas = holder.lockCanvas();
+                    update();
+                }finally {
+                    holder.unlockCanvasAndPost(canvas);
+                }
+                //update();
                 // Handle game loop
-            }
+
+            } // end while
 
         }
     }

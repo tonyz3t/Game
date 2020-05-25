@@ -1,18 +1,24 @@
 package com.example.game;
 
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Point;
 import android.view.Display;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import java.util.Random;
 
-public class Boxes implements Updatable{
+public class Boxes implements Updatable, Renderable{
     private int mBoxWidth = 100;
     private int mBoxHorizontalGap = (int) Math.random() % 200; // Alter later
 
     // Box movement
     private float xVel = -5.0f;
     private float x1, x2, x3;
-    private int y;      // All boxes are on the ground level for now
+    private float y;      // All boxes are on the ground level for now
 
     // Closest Box
     private int mCurrentBox;
@@ -20,9 +26,13 @@ public class Boxes implements Updatable{
     private float[][] mBoxCoords = new float[3][2];
 
     private Random rand;
+    private Context mMainContext;
 
-    public Boxes() {
+    public Boxes(Context context) {
         rand = new Random();
+
+        // Get window dimensions
+        mMainContext = context;
 
         resetBoxes();
     }
@@ -30,12 +40,19 @@ public class Boxes implements Updatable{
     // Resets the box positons for a new game
     private void resetBoxes() {
         mCurrentBox = 0;
-
-        x1 = MainActivity.getWidth() * 2;
+        x1 = getScreenWidth() /2;
         x2 = x1 + mBoxWidth + mBoxHorizontalGap;
         x3 = x2 + mBoxWidth + mBoxHorizontalGap;
 
-        y = MainActivity.getHeight() / 2;
+        y = (float) getScreenHeight() / 2;
+    }
+
+    private float getScreenWidth(){
+        return (float) mMainContext.getResources().getDisplayMetrics().widthPixels;
+    }
+
+    private float getScreenHeight(){
+        return (float) mMainContext.getResources().getDisplayMetrics().heightPixels;
     }
 
     public float[] getCurrentBox(){
@@ -58,17 +75,17 @@ public class Boxes implements Updatable{
 
         // if our boxes reach the end of the screen, reset them to the start of the screen
         if(x1 + mBoxWidth < 0) {
-            x1 = MainActivity.getWidth();
+            x1 = getScreenWidth();
             mCurrentBox = 1;
         }
 
         if(x2 + mBoxWidth < 0) {
-            x2 = MainActivity.getWidth();
+            x2 = getScreenWidth();
             mCurrentBox = 2;
         }
 
         if(x2 + mBoxWidth < 0) {
-            x2 = MainActivity.getWidth();
+            x2 = getScreenWidth();
             mCurrentBox = 0;
         }
 
@@ -87,6 +104,11 @@ public class Boxes implements Updatable{
                 mBoxCoords[2][1] = y;
                 break;
         }
+    }
+
+    @Override
+    public void render(Canvas canvas, Paint globalPaint, float interpolation) {
+        //canvas.drawBitmap();
     }
 }
 
