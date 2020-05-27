@@ -37,8 +37,18 @@
 
     <ImageView
         android:id="@+id/sprite_crate"
-        android:layout_width="20sp"
-        android:layout_height="20sp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        />
+    <ImageView
+        android:id="@+id/sprite_crate2"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        />
+    <ImageView
+        android:id="@+id/sprite_crate3"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         />
 
     <SurfaceView
