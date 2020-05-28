@@ -9,8 +9,12 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -20,6 +24,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.LinearInterpolator;
 import android.widget.Adapter;
 import android.widget.Button;
@@ -36,6 +41,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class MainActivity extends AppCompatActivity{
     // OUR MEMBER VARIABLES
+    // Our Input
+
     boolean animationOver = true;
     private Button mPauseButton;
     //private PauseDialogFragment mPauseDialog;
@@ -53,6 +60,13 @@ public class MainActivity extends AppCompatActivity{
     private Box mBoxOne;
     private Box mBoxTwo;
     private Box mBoxThree;
+
+    // New character object and bitmap
+    private Sprite mCharSprite;
+    private Bitmap mBitmapChar;
+    private ImageView mCharImageView;
+    private int mCharXPosition;
+    private int mCharYPosition;
 
     // List of imageviews for easier manipulation
     private ArrayList<ImageView> mListBoxImages = new ArrayList<>();
@@ -81,6 +95,7 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         // Get Window Dimensions
         mSize = new Point();
         getWindowManager().getDefaultDisplay().getSize(mSize);
@@ -90,7 +105,7 @@ public class MainActivity extends AppCompatActivity{
         screenCoverLayout = (SurfaceView) findViewById(R.id.screenFrameLayout);
 
         //Box init and image
-        mBitmap = PictureUtils.getScaledBitmap(getResources(), R.drawable.simplecrate, this, 10, 10);
+        mBitmap = PictureUtils.getScaledBitmap(getResources(), R.drawable.simplecrate, this);
         mBoxImage = (ImageView) findViewById(R.id.sprite_crate);
         mBoxImage.setImageBitmap(mBitmap);
         mBoxImage2 = (ImageView) findViewById(R.id.sprite_crate2);
@@ -99,15 +114,28 @@ public class MainActivity extends AppCompatActivity{
         mBoxImage3.setImageBitmap(mBitmap);
 
         // Box objects
-        mBoxOne = new Box(this,mBitmap, mSize.x);
-        mBoxTwo = new Box(this, mBitmap, mSize.x + 400);
-        mBoxThree = new Box(this, mBitmap, mSize.x + 800);
+        mBoxOne = new Box(this, mSize.x);
+        mBoxTwo = new Box(this, mSize.x + 400);
+        mBoxThree = new Box(this, mSize.x + 800);
 
         // Add boxes to our list of updatables
         addUpdatable(mBoxOne);
         addUpdatable(mBoxTwo);
         addUpdatable(mBoxThree);
         //addUpdatable(mBoxes);
+
+        // New Character Object and bitmap
+        mCharSprite = new Sprite(this);
+        addUpdatable(mCharSprite);
+        mBitmapChar = PictureUtils.getScaledBitmap(getResources(), R.drawable.charsprite, this);
+        mCharImageView = (ImageView) findViewById(R.id.char_image_view);
+        image.setImageBitmap(mBitmapChar);
+        image.setX(100.0f);
+        image.setY((float)getResources().getDisplayMetrics().heightPixels/2);
+        //mCharImageView.setImageBitmap(mBitmapChar);
+        mCharImageView.setY(mCharSprite.getY());
+        mCharXPosition = 100;
+        mCharYPosition = mSize.y/2;
 
         // Pause Button
         mPauseButton = (Button) findViewById(R.id.pause_button);
@@ -137,10 +165,15 @@ public class MainActivity extends AppCompatActivity{
                     //Store time of inital press
                     case MotionEvent.ACTION_DOWN: {
                         startClickTime = Calendar.getInstance().getTimeInMillis();
+                        if(mCharSprite.isReleased()){
+                            mCharSprite.setIsTouched(true);
+                            mCharSprite.setIsReleased(false);
+                        }
                         break;
                     }
                     //Lifting finger off screen
                     case MotionEvent.ACTION_UP: {
+                        mCharSprite.setIsReleased(true);
                         //Only press if not long hold
                         long clickDuration = Calendar.getInstance().getTimeInMillis() - startClickTime;
                         if (clickDuration < MAX_CLICK_DURATION) {
@@ -237,13 +270,54 @@ public class MainActivity extends AppCompatActivity{
         });
     }
 
-
-
     // Stop thread once the activity is destroyed
     @Override
     protected void onDestroy() {
         super.onDestroy();
         //stopThread();
+    }
+
+    //Simple up down animation method for double jump
+    private void doubleJump(ImageView image) {
+        hasDoubleJumpHappened = true;
+        int[] locationOnScreent = new int[2];
+        image.getLocationOnScreen(locationOnScreent);
+
+        ObjectAnimator animationUp = ObjectAnimator.ofFloat(image, "translationY", -210f);
+        ObjectAnimator animationDown = ObjectAnimator.ofFloat(image, "translationY", +210f);
+        AnimatorSet set = new AnimatorSet();
+        set.playSequentially(animationUp, animationDown);
+        set.setDuration(220);
+        set.setInterpolator(new LinearInterpolator());
+        set.start();
+        set.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                hasDoubleJumpHappened = false;
+            }
+        });
+
+    }
+
+    // method to update our updatable objects
+    private void update(){
+        for(Updatable u: updatables){
+            u.update();
+        }
+    }
+
+    private void updateAndDrawBox(){
+        update();
+
+        int x1 = mBoxOne.getX();
+
+        mBoxImage.setX((float)mBoxOne.getX());
+        mBoxImage.setY((float)mBoxOne.getY());
+        mBoxImage2.setX((float)mBoxTwo.getX());
+        mBoxImage2.setY((float)mBoxTwo.getY());
+        mBoxImage3.setX((float)mBoxThree.getX());
+        mBoxImage3.setY((float)mBoxThree.getY());
+       // mCharImageView.setY((float) mCharSprite.getY());
     }
 
     // Helper method to start our backgroundThread
@@ -279,48 +353,6 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    //Simple up down animation method for double jump
-    private void doubleJump(ImageView image) {
-        hasDoubleJumpHappened = true;
-        int[] locationOnScreent = new int[2];
-        image.getLocationOnScreen(locationOnScreent);
-
-        ObjectAnimator animationUp = ObjectAnimator.ofFloat(image, "translationY", -500f);
-        ObjectAnimator animationDown = ObjectAnimator.ofFloat(image, "translationY", +210f);
-        AnimatorSet set = new AnimatorSet();
-        set.playSequentially(animationUp, animationDown);
-        set.setDuration(220);
-        set.setInterpolator(new LinearInterpolator());
-        set.start();
-        set.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                hasDoubleJumpHappened = false;
-            }
-        });
-
-    }
-
-    // method to update our updatable objects
-    private void update(){
-        for(Updatable u: updatables){
-            u.update();
-        }
-    }
-
-    private void updateAndDrawBox(){
-        update();
-
-        int x1 = mBoxOne.getX();
-
-        mBoxImage.setX((float)mBoxOne.getX());
-        mBoxImage.setY((float)mBoxOne.getY());
-        mBoxImage2.setX((float)mBoxTwo.getX());
-        mBoxImage2.setY((float)mBoxTwo.getY());
-        mBoxImage3.setX((float)mBoxThree.getX());
-        mBoxImage3.setY((float)mBoxThree.getY());
-    }
-
     // Custom background thread
     // We will handle our game loop within this class
     private class BackgroundThread extends Thread{
@@ -330,6 +362,7 @@ public class MainActivity extends AppCompatActivity{
         // Game loop delay between screen refresh in milliseconds
         private static final long DELAY = 33;
         private SurfaceHolder mHolder;
+
         private boolean mIsRunning;
 
         public BackgroundThread(SurfaceHolder holder){
@@ -380,5 +413,8 @@ public class MainActivity extends AppCompatActivity{
             mIsRunning = status;
         }
     }
+
+    // TODO: Collision detection
+    // TODO: score count
 
 }

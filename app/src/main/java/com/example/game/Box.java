@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 
 public class Box implements Updatable {
-    private Bitmap mImage;
     private int mScreenHeight;
     private int mScreenWidth;
 
@@ -18,19 +17,14 @@ public class Box implements Updatable {
     private Context mAppContext;
 
     // Constructor
-    public Box(Context context, Bitmap image, int x){
+    public Box(Context context, int x){
         mAppContext = context;
-        mImage = image;
 
         mScreenHeight = context.getResources().getDisplayMetrics().heightPixels;
         mScreenWidth = context.getResources().getDisplayMetrics().widthPixels;
 
         mX = x;
         mY = context.getResources().getDisplayMetrics().heightPixels/2;
-    }
-
-    public void draw(Canvas canvas){
-        canvas.drawBitmap(mImage, mX, mY, null);
     }
 
 

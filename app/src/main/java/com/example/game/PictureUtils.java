@@ -46,14 +46,13 @@ public class PictureUtils {
     }
 
     // Conservative scaling method to scale our bitmap
-    public static Bitmap getScaledBitmap(Resources resources, int id, Activity activity, int x, int y){
+    public static Bitmap getScaledBitmap(Resources resources, int id, Activity activity){
         // get the size of our screen
         Point size = new Point();
         activity.getWindowManager().getDefaultDisplay().getSize(size);
         int myX = size.x;
         int myY = size.y;
-        if (x > 0) myX = x;
-        if (y>0) myY = y;
+
         return getScaledBitmap(resources, id, myX, myY);
     }
 }

@@ -21,19 +21,15 @@
 
     <ImageView
         android:id="@+id/imageImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="151dp"
-        android:layout_marginTop="311dp"
-        android:layout_marginEnd="152dp"
-        android:layout_marginBottom="312dp"
-        android:contentDescription="image"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_launcher_foreground"
-        tools:ignore="HardcodedText" />
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+         />
+
+    <ImageView
+        android:id="@+id/char_image_view"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        />
 
     <ImageView
         android:id="@+id/sprite_crate"
