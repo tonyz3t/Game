@@ -283,7 +283,7 @@ public class MainActivity extends AppCompatActivity{
         int[] locationOnScreent = new int[2];
         image.getLocationOnScreen(locationOnScreent);
 
-        ObjectAnimator animationUp = ObjectAnimator.ofFloat(image, "translationY", -210f);
+        ObjectAnimator animationUp = ObjectAnimator.ofFloat(image, "translationY", -500f);
         ObjectAnimator animationDown = ObjectAnimator.ofFloat(image, "translationY", +210f);
         AnimatorSet set = new AnimatorSet();
         set.playSequentially(animationUp, animationDown);
