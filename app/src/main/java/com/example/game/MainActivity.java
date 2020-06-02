@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity{
 
         // Character Image
         image = findViewById(R.id.imageImageView);
-        image.setImageBitmap(mBitmapChar);
+        //image.setImageBitmap(mBitmapChar);
         image.setX(100.0f);
         image.setY((float)getResources().getDisplayMetrics().heightPixels/2);
 
@@ -169,7 +169,8 @@ public class MainActivity extends AppCompatActivity{
                     //Lifting finger off screen
                     case MotionEvent.ACTION_UP: {
 
-                        //Only press if not long hold
+                        // FOLLOWING CODE IS FOR JUMPING USING OBJECT ANIMATOR
+                        /*//Only press if not long hold
                         long clickDuration = Calendar.getInstance().getTimeInMillis() - startClickTime;
                         if (clickDuration < MAX_CLICK_DURATION) {
                             if (!hasDoubleJumpHappened && !animationOver) {
@@ -200,7 +201,7 @@ public class MainActivity extends AppCompatActivity{
                                 });
 
                             }
-                        }
+                        }*/
                     }
 
                 }
@@ -285,7 +286,6 @@ public class MainActivity extends AppCompatActivity{
                 hasDoubleJumpHappened = false;
             }
         });
-
     }
 
     // method to update our updatable objects
@@ -293,6 +293,7 @@ public class MainActivity extends AppCompatActivity{
         for(Updatable u: updatables){
             u.update();
         }
+        if (animationOver) image.setY(getResources().getDisplayMetrics().heightPixels/2);
     }
 
     // helper method to update our character and box sprites location on screen

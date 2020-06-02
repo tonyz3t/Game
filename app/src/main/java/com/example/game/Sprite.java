@@ -10,9 +10,13 @@ public class Sprite implements Updatable {
     // X and Y coordinates of sprite object
     private int mX, mY;
     // how high the jumps
-    private int mJumpVel = -150;
+    private int mJumpVel = -450;
     // the speed at which the sprite falls
-    private int mGravity = 15;
+    private int mGravity = 40;
+
+    // Double Jump variables
+    private boolean mIsInAir;
+    private boolean mHasDoubleJumped;
 
 
     //Height of the screen
@@ -25,11 +29,24 @@ public class Sprite implements Updatable {
         mX = 100;
         mY = (SCREEN_HEIGHT/2) -200;
 
+        mIsInAir = mHasDoubleJumped = false;
+
     }
 
     // Make the sprite jump
     public void jump(){
-        mY += mJumpVel;
+        // check to see if the player is in the air and has double jumped
+        // exit out of this function if both conditions are true
+        if(mIsInAir && mHasDoubleJumped) return;
+
+        // double jump logic
+        if (mIsInAir){
+            mY += mJumpVel;
+            mHasDoubleJumped = true;
+        } else {
+            mY += mJumpVel;
+            mIsInAir = true;
+        }
     }
 
 
@@ -38,7 +55,11 @@ public class Sprite implements Updatable {
         mY += mGravity;
 
         // dont let the sprite fall beyond the floor line
-        if(mY > SCREEN_HEIGHT/2) mY = SCREEN_HEIGHT/2;
+        if(mY > SCREEN_HEIGHT/2) {
+            mY = SCREEN_HEIGHT/2;
+            mIsInAir = false;
+            mHasDoubleJumped = false;
+        }
 
 
     }
