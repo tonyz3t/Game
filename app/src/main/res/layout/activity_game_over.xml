@@ -6,4 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".GameOver">
 
+    <EditText
+        android:id="@+id/gameOverEditText"
+        android:layout_width="106dp"
+        android:layout_height="49dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Game  Over"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

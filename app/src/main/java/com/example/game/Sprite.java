@@ -2,6 +2,7 @@ package com.example.game;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.View;
@@ -94,6 +95,7 @@ public class Sprite implements Updatable {
         if(overlapWithBoxOne||overlapWithBoxTwo||overlapWithBoxThree){
             //Game over
             int x = 10;
+            activity.startActivity(new Intent(activity,GameOver.class));
         }
 
         // dont let the sprite fall beyond the floor line
