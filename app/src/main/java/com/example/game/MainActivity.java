@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity{
     private SurfaceHolder holder;
     // Horizontal gap for our boxes
     private double mBoxHorizontalGap = 400;
+    private boolean isGameOver = false;
 
     //box
     private ImageView mBoxImage;
@@ -288,27 +289,32 @@ public class MainActivity extends AppCompatActivity{
         });
     }
 
+
+
+
     // method to update our updatable objects
     private void update(){
         for(Updatable u: updatables){
             u.update();
         }
-        if (animationOver) image.setY(getResources().getDisplayMetrics().heightPixels/2);
+        //if (animationOver) image.setY(getResources().getDisplayMetrics().heightPixels/2);
     }
 
     // helper method to update our character and box sprites location on screen
     private void updateAndDrawBox(){
-        // update the location of the objects
-        update();
+       if(!isGameOver) {
+           // update the location of the objects
+           update();
 
-        // set the object's imageviews to be the location of the object
-        mBoxImage.setX((float)mBoxOne.getX());
-        mBoxImage.setY((float)mBoxOne.getY());
-        mBoxImage2.setX((float)mBoxTwo.getX());
-        mBoxImage2.setY((float)mBoxTwo.getY());
-        mBoxImage3.setX((float)mBoxThree.getX());
-        mBoxImage3.setY((float)mBoxThree.getY());
-        mCharImageView.setY((float) mCharSprite.getY());
+           // set the object's imageviews to be the location of the object
+           mBoxImage.setX((float) mBoxOne.getX());
+           mBoxImage.setY((float) mBoxOne.getY());
+           mBoxImage2.setX((float) mBoxTwo.getX());
+           mBoxImage2.setY((float) mBoxTwo.getY());
+           mBoxImage3.setX((float) mBoxThree.getX());
+           mBoxImage3.setY((float) mBoxThree.getY());
+           mCharImageView.setY((float) mCharSprite.getY());
+       }
     }
 
     // Helper method to start our backgroundThread
@@ -344,6 +350,10 @@ public class MainActivity extends AppCompatActivity{
             //destroy background thread
             mBackgroundThread = null;
         }
+    }
+    //set gameOver
+    public void setIsGameOver(boolean value){
+        this.isGameOver = value;
     }
 
     // Custom background thread
@@ -415,5 +425,6 @@ public class MainActivity extends AppCompatActivity{
 
     // TODO: Collision detection
     // TODO: score count
+
 
 }

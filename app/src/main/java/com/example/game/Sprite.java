@@ -21,7 +21,7 @@ public class Sprite implements Updatable {
     // Double Jump variables
     private boolean mIsInAir;
     private boolean mHasDoubleJumped;
-    private Activity activity;
+    private MainActivity activity;
 
     //Height of the screen
     private int SCREEN_HEIGHT;
@@ -34,7 +34,7 @@ public class Sprite implements Updatable {
         mY = (SCREEN_HEIGHT/2) -200;
 
         mIsInAir = mHasDoubleJumped = false;
-        this.activity = (Activity) context;
+        this.activity = (MainActivity) context;
 
     }
 
@@ -95,6 +95,7 @@ public class Sprite implements Updatable {
         if(overlapWithBoxOne||overlapWithBoxTwo||overlapWithBoxThree){
             //Game over
             int x = 10;
+            activity.setIsGameOver(true);
             activity.startActivity(new Intent(activity,GameOver.class));
         }
 
