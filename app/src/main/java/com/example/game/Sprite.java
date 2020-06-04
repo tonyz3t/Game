@@ -31,7 +31,7 @@ public class Sprite implements Updatable {
 
         // set the starting position of the sprite
         mX = 100;
-        mY = (SCREEN_HEIGHT/2) -200;
+        mY = (SCREEN_HEIGHT/2) -150;
 
         mIsInAir = mHasDoubleJumped = false;
         this.activity = (MainActivity) context;

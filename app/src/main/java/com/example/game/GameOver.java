@@ -15,19 +15,21 @@ public class GameOver extends AppCompatActivity {
         setContentView(R.layout.activity_game_over);
         //Play Again
         Button button = findViewById(R.id.playAgainButton);
+        //Detect click on button
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //activity.startActivity(new Intent(activity,GameOver.class));
+                //switch activity to main activity. IE play game again
                 startActivity(new Intent(GameOver.this,MainActivity.class));
             }
         });
         //Go back to main menu
         Button menuButton = findViewById(R.id.mainMenuButton);
+        //Listen for click
         menuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //activity.startActivity(new Intent(activity,GameOver.class));
+                //Go back to main menu
                 startActivity(new Intent(GameOver.this, MainMenuActivity.class));
             }
         });
