@@ -94,7 +94,6 @@ public class Sprite implements Updatable {
 
         if(overlapWithBoxOne||overlapWithBoxTwo||overlapWithBoxThree){
             //Game over
-            int x = 10;
             activity.setIsGameOver(true);
             activity.startActivity(new Intent(activity,GameOver.class));
         }
