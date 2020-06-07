@@ -12,7 +12,7 @@ public class Box implements Updatable {
 
     // x y coords
     private int mX, mY;
-    private int xVel = -10;
+    private int xVel = -20;
 
     private Context mAppContext;
 
